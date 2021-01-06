@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 
+from hiretubers import models
+
 def login(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -57,4 +59,11 @@ def logout_user(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request, 'accounts/dashboard.html')
+    current_user = request.user.id
+    dashboard = models.Hiretuber.objects.filter(user_id=current_user)
+    count = dashboard.count()
+    data = {
+        'dashboard': dashboard,
+        'count': count,
+    }
+    return render(request, 'accounts/dashboard.html', data)
